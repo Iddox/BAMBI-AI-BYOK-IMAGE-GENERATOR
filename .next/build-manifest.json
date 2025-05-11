@@ -1,0 +1,43 @@
+{
+  "polyfillFiles": [
+    "static/chunks/polyfills.js"
+  ],
+  "devFiles": [],
+  "ampDevFiles": [],
+  "lowPriorityFiles": [
+    "static/development/_buildManifest.js",
+    "static/development/_ssgManifest.js"
+  ],
+  "rootMainFiles": [
+    "static/chunks/webpack.js",
+    "static/chunks/framework-node_modules_framer-motion_dist_es_a.js",
+    "static/chunks/framework-node_modules_framer-motion_dist_es_m.js",
+    "static/chunks/framework-node_modules_next_dist_b.js",
+    "static/chunks/framework-node_modules_next_dist_client_app-i.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_a.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_react-dev-overlay_hot-reloader-client_js-05a8efda.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_react-dev-overlay_internal_R.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_react-dev-overlay_internal_components_O.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_react-dev-overlay_internal_components_V.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_react-dev-overlay_internal_container_B.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_rea.js",
+    "static/chunks/framework-node_modules_next_dist_client_components_r.js",
+    "static/chunks/framework-node_modules_next_dist_client_c.js",
+    "static/chunks/framework-node_modules_next_dist_client_g.js",
+    "static/chunks/framework-node_modules_next_dist_client_l.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_a.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_m.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_react-dom_cjs_react-dom_development_js-3041f41d.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_react-d.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_react_c.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_r.js",
+    "static/chunks/framework-node_modules_next_dist_compiled_util_util_js-898b8e58.js",
+    "static/chunks/framework-node_modules_next_d.js",
+    "static/css/framework-node_modules_next_font_google_target_css-19e8c181.css",
+    "static/chunks/main-app.js"
+  ],
+  "pages": {
+    "/_app": []
+  },
+  "ampFirstPages": []
+}

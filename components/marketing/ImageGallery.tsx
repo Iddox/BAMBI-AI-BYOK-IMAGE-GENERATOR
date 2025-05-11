@@ -39,10 +39,10 @@ const ImageGallery = () => {
     { src: '/gallery/image 10.webp', alt: 'AI generated image 10' },
   ];
 
-  // Duplicate the images for continuous scrolling
-  const row1Images = [...galleryImages, ...galleryImages, ...galleryImages];
-  // Créer une copie pour éviter de modifier l'original avec reverse()
-  const row2Images = [...[...galleryImages].reverse(), ...galleryImages, ...[...galleryImages].reverse()];
+  // Utiliser exactement 10 images pour chaque rangée
+  const row1Images = [...galleryImages];
+  // Utiliser les mêmes 10 images pour la deuxième rangée mais dans l'ordre inverse
+  const row2Images = [...galleryImages].reverse();
 
   return (
     <section className="py-20 bg-gradient-to-b from-bambi-background to-bambi-card/30 overflow-hidden relative">

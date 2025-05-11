@@ -31,6 +31,21 @@ const config: Config = {
         'grid': {
           '0%': { transform: 'translateZ(0)' },
           '100%': { transform: 'translateZ(80px)' }
+        },
+        'pulse-subtle': {
+          '0%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.05)', opacity: '0.9' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
+        },
+        'float': {
+          '0%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+          '100%': { transform: 'translateY(0px)' }
+        },
+        'glow': {
+          '0%': { boxShadow: '0 0 5px rgba(123, 92, 250, 0.3)' },
+          '50%': { boxShadow: '0 0 20px rgba(123, 92, 250, 0.6)' },
+          '100%': { boxShadow: '0 0 5px rgba(123, 92, 250, 0.3)' }
         }
       },
       animation: {
@@ -41,6 +56,9 @@ const config: Config = {
         'marquee-fast': 'marquee 40s linear infinite',
         'marquee-reverse-fast': 'marquee-reverse 40s linear infinite',
         'grid': 'grid 10s linear infinite',
+        'pulse-subtle': 'pulse-subtle 4s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'glow': 'glow 3s ease-in-out infinite',
       },
   		colors: {
         bambi: {

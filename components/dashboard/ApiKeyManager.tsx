@@ -75,11 +75,13 @@ export function ApiKeyManager() {
   };
 
   // Gérer l'ouverture/fermeture du modal avec animation
-  const closeModal = () => {
+  const handleCloseModal = () => {
     setIsModalExiting(true);
     setTimeout(() => {
       setIsModalOpen(false);
       setIsModalExiting(false);
+      // Appeler closeModal de lib/modal-utils pour gérer la classe CSS du body
+      closeModal();
     }, 200);
   };
 
@@ -235,13 +237,14 @@ export function ApiKeyManager() {
     if (isModalOpen || showUpsellModal) {
       openModal();
     } else {
+      // Seulement gérer la classe CSS du body, ne pas fermer le modal ici
       closeModal();
     }
 
     // Gérer la touche Escape pour fermer le modal
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isModalOpen) closeModal();
+        if (isModalOpen) handleCloseModal();
         if (showUpsellModal) setShowUpsellModal(false);
       }
     };
@@ -250,7 +253,7 @@ export function ApiKeyManager() {
 
     // Nettoyer les effets
     return () => {
-      closeModal();
+      closeModal(); // Seulement nettoyer la classe CSS du body
       window.removeEventListener('keydown', handleEscape);
     };
   }, [isModalOpen, showUpsellModal]);
@@ -320,12 +323,7 @@ export function ApiKeyManager() {
     }
 
     // Fermer le modal avec animation
-    setIsModalExiting(true);
-    setTimeout(() => {
-      setIsModalOpen(false);
-      setIsModalExiting(false);
-      closeModal();
-    }, 200);
+    handleCloseModal();
 
     // Afficher un feedback de succès
     showFeedback('success', isEditing ? 'Profil API mis à jour avec succès' : 'Profil API créé avec succès');
@@ -571,7 +569,7 @@ export function ApiKeyManager() {
                 {isEditing ? "Modifier le Profil API" : isDuplicating ? "Dupliquer le Profil API" : "Ajouter un Profil API"}
               </h2>
               <button
-                onClick={closeModal}
+                onClick={handleCloseModal}
                 className="text-bambi-subtext hover:text-bambi-text p-2 rounded-full hover:bg-bambi-border/20"
                 aria-label="Fermer"
               >
@@ -675,7 +673,7 @@ export function ApiKeyManager() {
             <div className="sticky bottom-0 bg-bambi-card border-t border-bambi-border p-4 flex flex-col sm:flex-row sm:justify-end gap-3">
               <Button
                 variant="outline"
-                onClick={closeModal}
+                onClick={handleCloseModal}
                 className="border-bambi-border w-full sm:w-auto order-2 sm:order-1"
               >
                 Annuler
