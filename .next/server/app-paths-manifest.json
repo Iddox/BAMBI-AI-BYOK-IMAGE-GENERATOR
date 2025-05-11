@@ -1,3 +1,9 @@
 {
-  "/(marketing)/page": "app/(marketing)/page-c.js"
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(marketing)/page": "app/(marketing)/page-c.js",
+  "/(dashboard)/api-keys/page": "app/(dashboard)/api-keys/page.js",
+  "/(dashboard)/generate/page": "app/(dashboard)/generate/page.js",
+  "/(dashboard)/gallery/page": "app/(dashboard)/gallery/page.js",
+  "/(dashboard)/plans/page": "app/(dashboard)/plans/page.js",
+  "/(dashboard)/account/page": "app/(dashboard)/account/page.js"
 }
