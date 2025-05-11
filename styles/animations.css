@@ -1,0 +1,197 @@
+/* Animations pour l'interface utilisateur */
+
+/* Animation d'entrée pour les cartes */
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-card-entrance {
+  animation: cardEntrance 0.3s ease-out forwards;
+}
+
+/* Animation pour le feedback de succès */
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.animate-success-pulse {
+  animation: successPulse 1.5s ease-out;
+}
+
+/* Animation pour le feedback d'erreur */
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+.animate-error-shake {
+  animation: errorShake 0.6s ease-in-out;
+}
+
+/* Animation pour le modal */
+@keyframes modalEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-modal-entrance {
+  animation: modalEntrance 0.25s ease-out forwards;
+}
+
+/* Animation pour le modal qui se ferme */
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.animate-modal-exit {
+  animation: modalExit 0.2s ease-in forwards;
+}
+
+/* Animation de fade pour les transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+/* Animation pour les notifications */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 0.2s ease-in forwards;
+}
+
+/* Animation de pulsation subtile */
+@keyframes subtlePulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtlePulse 2s infinite ease-in-out;
+}
+
+/* Transition pour les changements d'état */
+.transition-height {
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+/* Animation pour les boutons */
+@keyframes buttonPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(123, 92, 250, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(123, 92, 250, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(123, 92, 250, 0);
+  }
+}
+
+.animate-button-pulse {
+  animation: buttonPulse 1.5s infinite;
+}
+
+/* Animation pour les onglets */
+@keyframes tabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-tab-slide-in {
+  animation: tabSlideIn 0.2s ease-out forwards;
+}

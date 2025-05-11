@@ -1,0 +1,412 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import des styles personnalisés pour les menus déroulants et animations */
+@import '../styles/select.css';
+@import '../styles/animations.css';
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  /* Système d'espacement standardisé */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-base: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Rayons de bordure standardisés */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Système d'élévation avec ombres */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* Transitions standardisées */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Couleurs d'accent avec variations */
+  --accent-light: rgba(123, 92, 250, 0.15);
+  --accent-medium: rgba(123, 92, 250, 0.5);
+  --accent-glow: rgba(123, 92, 250, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-bambi-background text-bambi-text;
+  }
+
+  /* Style pour le modal plein écran */
+  .modal-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 9999999 !important;
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+  }
+
+  /* Empêcher le défilement quand le modal est ouvert */
+  body.modal-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* Landing page specific styles */
+@layer components {
+  .container-landing {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Système de grille et d'espacement */
+  .bambi-grid {
+    @apply grid gap-4;
+  }
+
+  .bambi-flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .bambi-flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .bambi-space-xs {
+    @apply space-y-1;
+  }
+
+  .bambi-space-sm {
+    @apply space-y-2;
+  }
+
+  .bambi-space-md {
+    @apply space-y-3;
+  }
+
+  .bambi-space-lg {
+    @apply space-y-4;
+  }
+
+  .bambi-space-xl {
+    @apply space-y-6;
+  }
+
+  /* Système d'élévation */
+  .bambi-elevation-0 {
+    @apply shadow-none;
+  }
+
+  .bambi-elevation-1 {
+    @apply shadow-sm;
+  }
+
+  .bambi-elevation-2 {
+    @apply shadow-md;
+  }
+
+  .bambi-elevation-3 {
+    @apply shadow-lg;
+  }
+
+  .bambi-elevation-4 {
+    @apply shadow-xl;
+  }
+
+  /* Composants améliorés */
+  .bambi-card {
+    @apply bg-bambi-card border border-bambi-border rounded-lg p-4 transition-all duration-300;
+  }
+
+  .bambi-card-interactive {
+    @apply bambi-card hover:border-bambi-accent/50 hover:shadow-md cursor-pointer;
+  }
+
+  .bambi-input-container {
+    @apply space-y-1;
+  }
+
+  .bambi-label {
+    @apply block text-sm font-medium text-bambi-text;
+  }
+
+  .bambi-input {
+    @apply bg-[#222222] border border-[#333333] text-white rounded-md w-full transition-all duration-300
+           focus:ring-2 focus:ring-bambi-accent/50 focus:border-bambi-accent;
+  }
+
+  .bambi-textarea {
+    @apply bambi-input resize-none p-3;
+  }
+
+  .bambi-select {
+    @apply bambi-input h-10 text-sm;
+  }
+
+  /* Boutons standardisés */
+  .btn-primary {
+    @apply bg-button-gradient text-white font-medium py-3 px-6 rounded-lg
+           hover:shadow-[0_0_15px_rgba(123,92,250,0.5)] transition-all duration-300
+           uppercase tracking-wide text-sm relative overflow-hidden;
+  }
+
+  .btn-primary::after {
+    @apply content-[''] absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
+  }
+
+  .btn-primary:hover::after {
+    @apply opacity-10;
+  }
+
+  .btn-primary:active::after {
+    @apply opacity-20;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-bambi-accent text-bambi-accent font-medium py-3 px-6
+           rounded-lg hover:bg-bambi-accent/10 transition-all duration-300
+           uppercase tracking-wide text-sm;
+  }
+
+  .btn-gallery {
+    @apply bg-button-gradient text-white font-medium py-3 px-6 rounded-lg
+           hover:shadow-[0_0_15px_rgba(123,92,250,0.5)] transition-all duration-300
+           uppercase tracking-wide text-sm flex items-center justify-center gap-2
+           transform hover:scale-105;
+  }
+
+  .btn-cta-primary {
+    @apply bg-button-gradient text-white font-bold py-3.5 px-8 rounded-lg
+           hover:shadow-[0_0_20px_rgba(123,92,250,0.6)] transition-all duration-300
+           uppercase tracking-wide text-sm flex items-center justify-center gap-2
+           transform hover:scale-105 hover:brightness-110;
+  }
+
+  .btn-cta-secondary {
+    @apply bg-transparent border border-bambi-accent/70 text-bambi-accent font-medium py-2.5 px-5 rounded-lg
+           hover:bg-bambi-accent/10 hover:border-bambi-accent transition-all duration-300
+           tracking-wide text-sm flex items-center justify-center gap-1;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-bambi-text mb-4;
+  }
+
+  .section-subtitle {
+    @apply text-xl text-bambi-subtext mb-8 max-w-3xl mx-auto;
+  }
+
+  .card-feature {
+    @apply bg-bambi-card p-6 rounded-xl border border-bambi-border hover:border-bambi-accent/50
+           transition-all duration-300;
+  }
+
+  .nav-link {
+    @apply text-bambi-subtext hover:text-bambi-text transition-all duration-150 relative;
+  }
+
+  .nav-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-bambi-accent transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  /* Hide scrollbars but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+
+  /* Pause animation on hover */
+  .pause-on-hover:hover > * {
+    animation-play-state: paused;
+  }
+
+  /* Gallery mask gradients - more subtle but still effective */
+  .gallery-mask-left {
+    background: linear-gradient(to right, #0D0C1D 30%, rgba(13, 12, 29, 0.85) 60%, rgba(13, 12, 29, 0.6) 80%, rgba(13, 12, 29, 0.2) 95%, rgba(13, 12, 29, 0));
+  }
+
+  .gallery-mask-right {
+    background: linear-gradient(to left, #0D0C1D 30%, rgba(13, 12, 29, 0.85) 60%, rgba(13, 12, 29, 0.6) 80%, rgba(13, 12, 29, 0.2) 95%, rgba(13, 12, 29, 0));
+  }
+
+  /* Mobile-specific masks with reduced width */
+  .gallery-mask-left-mobile {
+    background: linear-gradient(to right, #0D0C1D 20%, rgba(13, 12, 29, 0.85) 50%, rgba(13, 12, 29, 0.6) 75%, rgba(13, 12, 29, 0.2) 90%, rgba(13, 12, 29, 0));
+  }
+
+  .gallery-mask-right-mobile {
+    background: linear-gradient(to left, #0D0C1D 20%, rgba(13, 12, 29, 0.85) 50%, rgba(13, 12, 29, 0.6) 75%, rgba(13, 12, 29, 0.2) 90%, rgba(13, 12, 29, 0));
+  }
+
+  /* Gallery container with hidden overflow */
+  .gallery-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  /* Effet de grille pour le fond */
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(123, 92, 250, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(123, 92, 250, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Animation de pulsation subtile */
+  @keyframes pulse-subtle {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+
+  /* Styles pour le défilement fluide */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Ajustement pour les sections ciblées par les ancres */
+  section[id] {
+    scroll-margin-top: 80px;
+  }
+
+  /* Barre de défilement personnalisée pour Bambi AI */
+  .bambi-scrollbar {
+    scrollbar-width: thin; /* Pour Firefox */
+    scrollbar-color: rgba(123, 92, 250, 0.5) rgba(42, 42, 64, 0.3); /* Pour Firefox */
+  }
+
+  .bambi-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .bambi-scrollbar::-webkit-scrollbar-track {
+    background: rgba(42, 42, 64, 0.3);
+    border-radius: 10px;
+  }
+
+  .bambi-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(123, 92, 250, 0.5);
+    border-radius: 10px;
+  }
+
+  .bambi-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 92, 250, 0.7);
+  }
+}
