@@ -26,15 +26,30 @@ export function EnhancedPlanSelector() {
     try {
       // Logique pour sélectionner le plan premium (redirection vers Stripe)
       console.log("Upgrade to premium plan");
-      // Simuler un délai pour la démo
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Redirection vers Stripe Checkout (à implémenter)
-      // window.location.href = "/api/create-checkout-session";
 
-      // Pour la démo, on redirige directement vers le dashboard
-      window.location.href = "/generate";
-    } catch (err) {
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      // Appeler l'API pour créer une session de paiement Stripe
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la création de la session de paiement');
+      }
+
+      // Rediriger vers l'URL de paiement Stripe
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('URL de paiement non trouvée dans la réponse');
+      }
+    } catch (err: any) {
+      console.error('Erreur lors de la création de la session de paiement:', err);
+      setError(err.message || "Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setIsLoading(false);
     }

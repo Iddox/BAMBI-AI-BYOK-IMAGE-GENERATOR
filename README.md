@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://i.imgur.com/7B5CFA.png" alt="Bambi AI Logo" width="200"/>
   <h1>🎨 Bambi AI</h1>
   <p><strong>Générez des images IA avec vos propres clés API</strong></p>
 
@@ -106,6 +105,26 @@ npm run dev
 ```
 
 Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur pour voir l'application.
+
+### Configuration de Supabase
+
+1. Créez un compte sur [Supabase](https://supabase.com/) si vous n'en avez pas déjà un
+2. Créez un nouveau projet
+3. Récupérez les clés API dans les paramètres du projet (URL et clé anon)
+4. Mettez à jour votre fichier `.env.local` avec ces clés
+5. Exécutez les migrations SQL pour configurer la base de données :
+
+```bash
+npm run apply-migrations
+```
+
+### Configuration de Stripe (pour les paiements)
+
+1. Créez un compte sur [Stripe](https://stripe.com/) si vous n'en avez pas déjà un
+2. Récupérez les clés API dans les paramètres du compte
+3. Créez un produit et un prix pour l'abonnement premium
+4. Mettez à jour votre fichier `.env.local` avec ces informations
+5. Configurez un webhook Stripe pour recevoir les événements (utilisez [Stripe CLI](https://stripe.com/docs/stripe-cli) pour les tests locaux)
 
 ## 🛠️ Technologies
 

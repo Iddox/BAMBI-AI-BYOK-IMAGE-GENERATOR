@@ -1,6 +1,28 @@
 {
-  "sortedMiddleware": [],
-  "middleware": {},
+  "sortedMiddleware": [
+    "/"
+  ],
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge-runtime-webpack.js",
+        "server/framework.js",
+        "server/npm.supabase-node_modules_supabase_a.js",
+        "server/npm.supabase-node_modules_supabase_n.js",
+        "server/middleware.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^/.*$",
+          "originalSource": "/:path*"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    }
+  },
   "functions": {},
   "version": 2
 }

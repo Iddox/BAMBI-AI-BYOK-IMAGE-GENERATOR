@@ -5,7 +5,12 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: npm install && npm run build
+  - init: |
+      npm install && npm run build
+      echo "Démarrage des serveurs MCP en arrière-plan..."
+      npx -y @modelcontextprotocol/server-sequential-thinking &
+      npx -y @upstash/context7-mcp@latest &
+      node /workspace/hiiiiiiiii/fetch-mcp-server/dist/index.js &
+      export BRAVE_API_KEY="BSAgZMgJcb58_xWbZGU_mtUfjyS5LAe" && npx -y @modelcontextprotocol/server-brave-search &
+      echo "Serveurs MCP démarrés."
     command: npm run start
-
-
