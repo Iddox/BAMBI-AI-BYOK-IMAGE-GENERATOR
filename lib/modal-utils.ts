@@ -4,6 +4,7 @@
  * Utilitaires pour la gestion des modales et des redirections
  */
 
+import React from "react";
 import { useRouter } from "next/navigation";
 
 /**
@@ -90,6 +91,3 @@ export function useModalState(initialState = false) {
     close
   };
 }
-
-// Ajouter un import de React pour le hook personnalisé
-import React from "react";
