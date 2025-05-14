@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const supabase = createServiceRoleSupabaseClient()
 
-  // Gestion des événements Stripe
+  // Gestion des événements Stripe (webhooks)
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
