@@ -38,6 +38,34 @@ export class ChunkErrorBoundary extends Component<Props, State> {
     };
   }
 
+  componentDidMount(): void {
+    // Ajouter un gestionnaire d'erreur global pour les erreurs de chargement de chunks
+    window.addEventListener('error', (event) => {
+      if (
+        event.message.includes("ChunkLoadError") ||
+        event.message.includes("Loading chunk") ||
+        event.message.includes("failed to load chunk") ||
+        event.message.includes("Cannot read properties of undefined") ||
+        event.error?.toString().includes("ChunkLoadError")
+      ) {
+        console.error('Erreur de chargement de chunk détectée:', event);
+        this.setState({
+          hasError: true,
+          error: event.error || new Error(event.message),
+          errorInfo: { componentStack: event.filename || '' } as ErrorInfo
+        });
+
+        // Empêcher la propagation de l'erreur
+        event.preventDefault();
+      }
+    });
+  }
+
+  componentWillUnmount(): void {
+    // Supprimer le gestionnaire d'erreur global
+    window.removeEventListener('error', () => {});
+  }
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Enregistrer l'erreur pour le débogage
     console.error("ChunkErrorBoundary a capturé une erreur:", error, errorInfo);
@@ -66,10 +94,10 @@ export class ChunkErrorBoundary extends Component<Props, State> {
         });
       });
     }
-    
+
     // Effacer le localStorage
     localStorage.clear();
-    
+
     // Recharger la page
     window.location.reload();
   };
@@ -77,10 +105,13 @@ export class ChunkErrorBoundary extends Component<Props, State> {
   render(): ReactNode {
     if (this.state.hasError) {
       // Vérifier si l'erreur est liée au chargement de chunks
-      const isChunkError = 
+      const isChunkError =
         this.state.error?.message.includes("ChunkLoadError") ||
         this.state.error?.message.includes("Loading chunk") ||
-        this.state.error?.message.includes("failed to load chunk");
+        this.state.error?.message.includes("failed to load chunk") ||
+        this.state.error?.message.includes("Cannot read properties of undefined") ||
+        this.state.error?.message.includes("call") ||
+        this.state.error?.toString().includes("ChunkLoadError");
 
       // Utiliser le fallback personnalisé si fourni
       if (this.props.fallback) {
@@ -94,27 +125,27 @@ export class ChunkErrorBoundary extends Component<Props, State> {
             <AlertCircleIcon className="h-10 w-10 text-red-500" />
           </div>
           <h2 className="text-xl font-bold mb-2">
-            {isChunkError 
-              ? "Erreur de chargement de la page" 
+            {isChunkError
+              ? "Erreur de chargement de la page"
               : "Une erreur est survenue"}
           </h2>
           <p className="text-bambi-subtext mb-6 max-w-md">
-            {isChunkError 
+            {isChunkError
               ? "Nous avons rencontré un problème lors du chargement de cette page. Cela peut être dû à une connexion instable ou à un problème temporaire."
               : "Une erreur inattendue s'est produite. Veuillez réessayer ou contacter le support si le problème persiste."}
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button 
+            <Button
               onClick={this.handleReload}
               className="flex items-center justify-center"
             >
               <RefreshCwIcon className="mr-2 h-4 w-4" />
               Recharger la page
             </Button>
-            
+
             {isChunkError && (
-              <Button 
+              <Button
                 onClick={this.handleClearCache}
                 variant="outline"
                 className="flex items-center justify-center"
@@ -122,8 +153,8 @@ export class ChunkErrorBoundary extends Component<Props, State> {
                 Effacer le cache et recharger
               </Button>
             )}
-            
-            <Button 
+
+            <Button
               onClick={this.handleGoHome}
               variant="ghost"
               className="flex items-center justify-center"
@@ -132,7 +163,7 @@ export class ChunkErrorBoundary extends Component<Props, State> {
               Retour à l'accueil
             </Button>
           </div>
-          
+
           {/* Afficher les détails de l'erreur en mode développement */}
           {process.env.NODE_ENV === "development" && (
             <div className="mt-8 p-4 bg-gray-800 text-white rounded-md text-left overflow-auto max-w-full w-full max-h-[300px]">

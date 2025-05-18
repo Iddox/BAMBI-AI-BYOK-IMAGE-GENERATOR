@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DownloadIcon, ShareIcon, TrashIcon, Maximize2Icon, XIcon } from "lucide-react";
+import { DownloadIcon, ShareIcon, TrashIcon, Maximize2Icon, XIcon, Loader2Icon } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import ClientOnly from "@/components/client-wrappers/ClientOnly";
 
 // Types pour les images générées
 type GeneratedImage = {
@@ -18,51 +20,63 @@ type GeneratedImage = {
 export default function GalleryPage() {
   // États et router
   const router = useRouter();
-  const [images, setImages] = useState<GeneratedImage[]>([
-    // Exemples d'images pour la démo
-    {
-      id: "img-1",
-      url: "https://picsum.photos/seed/1001/512/512",
-      prompt: "Un paysage futuriste avec des bâtiments flottants et des cascades",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 heures avant
-      isPublic: true,
-    },
-    {
-      id: "img-2",
-      url: "https://picsum.photos/seed/1002/512/512",
-      prompt: "Portrait d'une femme avec des fleurs dans les cheveux, style art nouveau",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 heures avant
-      isPublic: false,
-    },
-    {
-      id: "img-3",
-      url: "https://picsum.photos/seed/1003/512/512",
-      prompt: "Un chat cyberpunk avec des implants néon dans une ruelle sombre",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 jour avant
-      isPublic: true,
-    },
-    {
-      id: "img-4",
-      url: "https://picsum.photos/seed/1004/512/512",
-      prompt: "Une forêt enchantée avec des créatures magiques et des champignons lumineux",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 jours avant
-      isPublic: true,
-    },
-    {
-      id: "img-5",
-      url: "https://picsum.photos/seed/1005/512/512",
-      prompt: "Un robot dessinant un tableau dans un atelier d'artiste",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 jours avant
-      isPublic: false,
-    },
-    {
-      id: "img-6",
-      url: "https://picsum.photos/seed/1006/512/512",
-      prompt: "Une ville sous-marine avec des bâtiments en forme de coquillages",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4), // 4 jours avant
-      isPublic: true,
-    },
-  ]);
+  const [images, setImages] = useState<GeneratedImage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fonction pour récupérer les images générées depuis Supabase
+  const fetchImages = async () => {
+    try {
+      setIsLoading(true);
+
+      // Créer un client Supabase
+      const supabase = createClient();
+
+      // Récupérer l'utilisateur actuel
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+
+      console.log(`Récupération des images pour l'utilisateur: ${user.id}`);
+
+      // Récupérer les images générées par l'utilisateur
+      const { data, error } = await supabase
+        .from('generated_images')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erreur lors de la récupération des images:', error);
+        setIsLoading(false);
+        return;
+      }
+
+      console.log(`${data.length} images récupérées depuis Supabase`);
+
+      // Transformer les données pour correspondre à notre format GeneratedImage
+      const transformedImages = data.map(item => ({
+        id: item.id,
+        url: item.image_url,
+        prompt: item.prompt,
+        timestamp: new Date(item.created_at),
+        isPublic: item.is_public || false,
+      }));
+
+      setImages(transformedImages);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des images:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Récupérer les images au chargement de la page
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
   // Fonction pour formater la date
   const formatDate = (date: Date) => {
@@ -91,30 +105,117 @@ export default function GalleryPage() {
   const openImageModal = (image: GeneratedImage) => {
     setSelectedImageForModal(image);
     // Ajouter la classe modal-open au body pour empêcher le défilement
-    document.body.classList.add('modal-open');
+    // Vérifier si nous sommes côté client
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('modal-open');
+    }
   };
 
   // Fonction pour fermer le modal d'image
   const closeImageModal = () => {
     setSelectedImageForModal(null);
     // Retirer la classe modal-open du body pour permettre le défilement
-    document.body.classList.remove('modal-open');
+    // Vérifier si nous sommes côté client
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('modal-open');
+    }
   };
 
   // Nettoyer la classe modal-open lorsque le composant est démonté
   useEffect(() => {
     return () => {
-      document.body.classList.remove('modal-open');
+      // Vérifier si nous sommes côté client
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('modal-open');
+      }
     };
   }, []);
 
   // Fonction pour supprimer une image
-  const deleteImage = (id: string) => {
-    setImages(images.filter(img => img.id !== id));
+  const deleteImage = async (id: string) => {
+    try {
+      // Créer un client Supabase
+      const supabase = createClient();
+
+      // Récupérer l'utilisateur actuel
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        console.error('Utilisateur non connecté');
+        return;
+      }
+
+      console.log(`Tentative de suppression de l'image ${id} pour l'utilisateur ${user.id}`);
+
+      // Vérifier d'abord si l'image existe et appartient à l'utilisateur
+      const { data: imageData, error: checkError } = await supabase
+        .from('generated_images')
+        .select('id')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (checkError) {
+        console.error('Erreur lors de la vérification de l\'image:', checkError);
+        return;
+      }
+
+      if (!imageData) {
+        console.error('Image non trouvée ou n\'appartient pas à l\'utilisateur');
+        return;
+      }
+
+      // Supprimer l'image de Supabase avec une approche directe
+      // Supprimer directement l'entrée dans generated_images
+      // La suppression en cascade se fera automatiquement si la table images existe
+      const { error } = await supabase
+        .from('generated_images')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Erreur lors de la suppression de l\'image:', error);
+        return;
+      }
+
+      console.log(`Image ${id} supprimée avec succès de la base de données`);
+
+      // Attendre un court délai pour permettre à Supabase de mettre à jour son cache
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Forcer une suppression directe via SQL si l'image persiste
+      try {
+        // Exécuter une requête SQL directe pour s'assurer que l'image est supprimée
+        const { error: rpcError } = await supabase.rpc('force_delete_image', { image_id: id });
+
+        if (rpcError) {
+          console.error('Erreur lors de la suppression forcée via RPC:', rpcError);
+          // Continuer malgré tout
+        } else {
+          console.log('Suppression forcée via RPC réussie');
+        }
+      } catch (rpcError) {
+        console.error('Exception lors de la suppression forcée via RPC:', rpcError);
+        // Continuer malgré tout
+      }
+
+      // Mettre à jour l'état local
+      setImages(images.filter(img => img.id !== id));
+      console.log('État local mis à jour, image supprimée de l\'interface');
+
+      // Rafraîchir la liste des images après un court délai
+      setTimeout(() => {
+        fetchImages();
+        console.log('Rafraîchissement de la galerie pour s\'assurer que les changements sont pris en compte');
+      }, 1000);
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'image:', error);
+    }
   };
 
   return (
-    <div className="space-y-8 mt-6">
+    <div className="space-y-8 mt-6" suppressHydrationWarning>
       {/* Titre élégant et stylisé */}
       <div className="text-center">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-bambi-accent to-bambi-accentDark bg-clip-text text-transparent inline-block mb-2">
@@ -123,8 +224,15 @@ export default function GalleryPage() {
         <div className="h-1 w-32 bg-gradient-to-r from-bambi-accent to-bambi-accentDark rounded-full mx-auto"></div>
       </div>
 
-      {/* Grille d'images */}
-      {images.length > 0 ? (
+      {/* Indicateur de chargement ou contenu */}
+      {isLoading ? (
+        <div className="flex justify-center items-center p-12">
+          <div className="flex flex-col items-center">
+            <Loader2Icon className="h-10 w-10 animate-spin text-bambi-accent" />
+            <p className="mt-4 text-bambi-subtext">Chargement de vos images...</p>
+          </div>
+        </div>
+      ) : images.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {images.map(image => (
             <Card key={image.id} className="overflow-hidden border border-[#333333] bg-[#1A1A1A] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:border-bambi-accent/50">
@@ -186,21 +294,22 @@ export default function GalleryPage() {
         </div>
       )}
 
-      {/* Modal pour l'affichage de l'image agrandie */}
-      {selectedImageForModal && (
-        <div
-          className="modal-fullscreen"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem'
-          }}
-          onClick={closeImageModal}>
+      {/* Modal pour l'affichage de l'image agrandie - Utiliser ClientOnly pour éviter les erreurs d'hydratation */}
+      <ClientOnly>
+        {selectedImageForModal && (
           <div
-            className="relative bg-[#1A1A1A] rounded-xl border border-[#333333] w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
+            className="modal-fullscreen"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1rem'
+            }}
+            onClick={closeImageModal}>
+            <div
+              className="relative bg-[#1A1A1A] rounded-xl border border-[#333333] w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
             {/* En-tête du modal */}
             <div className="flex justify-between items-center p-3 border-b border-[#333333]">
               <h3 className="text-lg font-medium text-bambi-text">Image détaillée</h3>
@@ -246,7 +355,8 @@ export default function GalleryPage() {
             </div>
           </div>
         </div>
-      )}
+        )}
+      </ClientOnly>
     </div>
   );
 }

@@ -1,93 +1,76 @@
 /** @type {import('next').NextConfig} */
+const webpack = require('webpack');
 const nextConfig = {
-  // Optimisation pour résoudre les problèmes de chargement de chunks
-  webpack: (config, { dev, isServer }) => {
-    // Augmenter la taille maximale des chunks
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      maxInitialRequests: 25,
-      minSize: 20000,
-      maxSize: 250000, // Taille maximale des chunks réduite pour éviter les problèmes
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        framework: {
-          name: 'framework',
-          test: /[\\/]node_modules[\\/](@react|react|react-dom|next|framer-motion)[\\/]/,
-          priority: 40,
-          enforce: true,
-        },
-        lib: {
-          test: /[\\/]node_modules[\\/](?!(@react|react|react-dom|next|framer-motion)[\\/])/,
-          name(module) {
-            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-            return `npm.${packageName.replace('@', '')}`;
-          },
-          priority: 30,
-          minChunks: 1,
-          reuseExistingChunk: true,
-        },
-        // Groupe spécifique pour les composants de dashboard
-        dashboard: {
-          test: /[\\/]components[\\/]dashboard[\\/]/,
-          name: 'dashboard-components',
-          priority: 25,
-          minChunks: 1,
-          reuseExistingChunk: true,
-        },
-        commons: {
-          name: 'commons',
-          minChunks: 2,
-          priority: 20,
-        },
-        shared: {
-          name: 'shared',
-          priority: 10,
-          minChunks: 2,
-          reuseExistingChunk: true,
-        },
+  // Transpiler les packages Supabase pour résoudre les problèmes de compatibilité ESM/CommonJS
+  transpilePackages: ['@supabase/supabase-js', '@supabase/ssr'],
+
+  // Configuration des images pour résoudre les problèmes d'optimisation
+  images: {
+    domains: ['picsum.photos'], // Ajouter les domaines externes d'images
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
       },
-    };
+    ],
+  },
 
-    // Désactiver la compression uniquement en développement
-    if (dev) {
-      config.optimization.minimize = false;
-    } else {
-      // En production, activer la compression
-      config.optimization.minimize = true;
-    }
-
-    // Ajouter une configuration pour gérer les erreurs de chargement de chunks
+  // Configuration webpack pour résoudre les problèmes de compatibilité ESM/CommonJS
+  webpack: (config, { isServer }) => {
+    // Résoudre le problème "exports is not defined" pour les modules Supabase
     if (!isServer) {
-      // Ajouter un plugin pour gérer les erreurs de chargement de chunks
-      config.output.chunkLoadingGlobal = 'bambiJsonp';
+      // Configurer les polyfills pour les modules Node.js
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        dns: false,
+        child_process: false,
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        url: require.resolve('url'),
+        zlib: require.resolve('browserify-zlib'),
+        http: require.resolve('stream-http'),
+        https: require.resolve('https-browserify'),
+        assert: require.resolve('assert'),
+        os: require.resolve('os-browserify'),
+        path: require.resolve('path-browserify'),
+        util: require.resolve('util'),
+        querystring: require.resolve('querystring-es3'),
+        buffer: require.resolve('buffer'),
+        process: require.resolve('process/browser'),
+      };
 
-      // Augmenter le timeout pour le chargement des chunks
-      config.output.chunkLoadTimeout = 120000; // 2 minutes
+      // Ajouter les plugins nécessaires pour les polyfills
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+          Buffer: ['buffer', 'Buffer'],
+        })
+      );
     }
 
     return config;
   },
-  // Augmenter la taille limite des pages
+  // Augmenter la taille limite des pages et forcer SWC pour next/font
   experimental: {
-    largePageDataBytes: 512 * 1000, // 512KB (valeur par défaut: 128KB)
+    largePageDataBytes: 1024 * 1000, // 1MB (valeur par défaut: 128KB)
+    forceSwcTransforms: true, // Forcer l'utilisation de SWC même avec une config Babel personnalisée
   },
+
   // Activer la compression en production, désactiver en développement
   compress: process.env.NODE_ENV === 'production',
   // Augmenter le délai d'attente pour les requêtes
   httpAgentOptions: {
     keepAlive: true,
-    timeout: 60000, // 60 secondes
   },
-  // Activer le mode strict uniquement en production
+  // Désactiver le mode strict en développement pour éviter les problèmes potentiels
   reactStrictMode: process.env.NODE_ENV === 'production',
-  // Optimiser la gestion des erreurs
-  onDemandEntries: {
-    // Période pendant laquelle les pages compilées sont conservées en mémoire
-    maxInactiveAge: 60 * 60 * 1000, // 1 heure
-    // Nombre de pages conservées en mémoire
-    pagesBufferLength: 5,
-  },
 }
 
 module.exports = nextConfig

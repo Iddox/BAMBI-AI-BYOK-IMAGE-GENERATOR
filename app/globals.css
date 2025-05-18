@@ -121,6 +121,48 @@
     @apply bg-bambi-background text-bambi-text;
   }
 
+  /* Animations personnalisées pour les effets de chargement */
+  @keyframes float-slow {
+    0% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-10px) translateX(5px); }
+    50% { transform: translateY(-5px) translateX(10px); }
+    75% { transform: translateY(5px) translateX(-5px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+
+  @keyframes float-medium {
+    0% { transform: translateY(0) translateX(0); }
+    33% { transform: translateY(-15px) translateX(10px); }
+    66% { transform: translateY(10px) translateX(-10px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+
+  @keyframes float-fast {
+    0% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-8px) translateX(8px); }
+    100% { transform: translateY(0) translateX(0); }
+  }
+
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: float-medium 6s ease-in-out infinite;
+  }
+
+  .animate-float-fast {
+    animation: float-fast 4s ease-in-out infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+
   /* Style pour le modal plein écran */
   .modal-fullscreen {
     position: fixed !important;

@@ -1,8 +1,8 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export function createServerSupabaseClient() {
-  const cookieStore = cookies()
+  const cookieStore = cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,25 +10,25 @@ export function createServerSupabaseClient() {
     {
       cookies: {
         get(name: string) {
-          return cookieStore.get(name)?.value
+          return cookieStore.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value, ...options })
+            cookieStore.set({ name, value, ...options });
           } catch (error) {
             // Cookies can't be set in middleware
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options })
+            cookieStore.set({ name, value: '', ...options });
           } catch (error) {
             // Cookies can't be removed in middleware
           }
         },
       },
     }
-  )
+  );
 }
 
 export function createServiceRoleSupabaseClient() {
@@ -38,15 +38,15 @@ export function createServiceRoleSupabaseClient() {
     {
       cookies: {
         get(name: string) {
-          return cookies().get(name)?.value
+          return cookies().get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          cookies().set({ name, value, ...options })
+          cookies().set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          cookies().set({ name, value: '', ...options })
+          cookies().set({ name, value: '', ...options });
         },
       },
     }
-  )
+  );
 }

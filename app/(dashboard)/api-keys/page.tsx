@@ -3,7 +3,16 @@
 import { Suspense } from "react";
 import { Loader2Icon } from "lucide-react";
 import { ChunkErrorBoundary } from "@/components/ui/ChunkErrorBoundary";
-import { ApiKeyManager } from "@/components/dashboard/ApiKeyManager";
+import dynamic from 'next/dynamic';
+
+// Import dynamique du composant ApiKeyManager
+const ApiKeyManager = dynamic(
+  () => import('@/components/dashboard/ApiKeyManager').then(mod => ({ default: mod.ApiKeyManager })),
+  {
+    ssr: false,
+    loading: () => <LoadingComponent />
+  }
+);
 
 // Composant de chargement réutilisable
 const LoadingComponent = () => (
@@ -18,8 +27,11 @@ const LoadingComponent = () => (
 export default function ApiKeysPage() {
   return (
     <ChunkErrorBoundary>
-      <Suspense fallback={<LoadingComponent />}>
-        <ApiKeyManager />
+      {/* Utiliser key pour forcer un remontage complet et éviter les erreurs d'hydratation */}
+      <Suspense fallback={<LoadingComponent />} key="api-key-manager-suspense">
+        <div suppressHydrationWarning>
+          <ApiKeyManager />
+        </div>
       </Suspense>
     </ChunkErrorBoundary>
   );

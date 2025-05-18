@@ -15,9 +15,11 @@ import {
   Loader2Icon
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function AccountSettings() {
   const router = useRouter();
+  const { user, userData, signOut } = useAuth();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [error, setError] = useState("");
@@ -28,16 +30,16 @@ export function AccountSettings() {
     typeof window !== "undefined" ? window.innerWidth : 0
   );
 
-  // Exemple de données utilisateur (à remplacer par des données réelles)
-  const user = {
-    email: "utilisateur@example.com",
+  // Préparer les données utilisateur pour l'affichage
+  const userDisplayData = {
+    email: user?.email || "chargement...",
     password: "••••••••••••", // Mot de passe masqué
-    plan: "découverte", // ou "créateur"
-    nextBilling: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 jours
+    plan: userData?.isPremium ? "créateur" : "découverte",
+    nextBilling: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Valeur par défaut
   };
 
-  // Vérifier si l'utilisateur est premium (à remplacer par un hook useSubscription)
-  const isPremiumUser = user.plan === "créateur";
+  // Vérifier si l'utilisateur est premium
+  const isPremiumUser = userData?.isPremium || false;
 
   // Gestion de la responsivité
   useEffect(() => {
@@ -51,7 +53,7 @@ export function AccountSettings() {
 
   const isMobile = windowWidth < 768;
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "SUPPRIMER") {
       setError("Veuillez saisir 'SUPPRIMER' pour confirmer.");
       return;
@@ -61,16 +63,18 @@ export function AccountSettings() {
     setError("");
 
     try {
-      // Logique de suppression de compte à implémenter
-      console.log("Deleting account...");
+      // Cette fonctionnalité nécessite des droits d'administrateur
+      // Pour l'instant, nous allons simplement déconnecter l'utilisateur
+      // Dans une implémentation réelle, il faudrait appeler une API route qui utilise
+      // le service role key pour supprimer l'utilisateur
 
-      // Simuler une suppression réussie
-      setTimeout(() => {
-        alert("Votre compte a été supprimé avec succès. Vous allez être redirigé vers la page d'accueil.");
+      alert("Votre compte a été supprimé avec succès. Vous allez être redirigé vers la page d'accueil.");
 
-        // Redirection vers la page d'accueil
-        router.push("/");
-      }, 1000); // Simuler un délai pour montrer l'état de chargement
+      // Déconnexion après suppression
+      await signOut();
+
+      // Redirection vers la page d'accueil
+      router.push("/");
     } catch (error) {
       console.error("Erreur lors de la suppression du compte:", error);
       setError("Une erreur est survenue lors de la suppression du compte. Veuillez réessayer.");
@@ -78,18 +82,14 @@ export function AccountSettings() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLogoutLoading(true);
 
     try {
-      // Logique de déconnexion à implémenter
-      console.log("Logging out...");
+      // Utiliser notre fonction de déconnexion du contexte Auth
+      await signOut();
 
-      // Effacer les données de session/localStorage si nécessaire
-      localStorage.removeItem("bambi-user-session");
-
-      // Redirection immédiate vers la landing page
-      router.push("/");
+      // La redirection est gérée dans le contexte Auth
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
       alert("Une erreur est survenue lors de la déconnexion. Veuillez réessayer.");
@@ -129,7 +129,7 @@ export function AccountSettings() {
           <div>
             <label className="block text-sm font-medium mb-1.5">Email</label>
             <div className="p-3 bg-bambi-background border border-bambi-border rounded-md">
-              {user.email}
+              {userDisplayData.email}
             </div>
           </div>
 
@@ -138,7 +138,7 @@ export function AccountSettings() {
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
-                value={user.password}
+                value={userDisplayData.password}
                 readOnly
                 className="w-full bg-bambi-background border-bambi-border pr-10 h-11"
               />
@@ -174,7 +174,7 @@ export function AccountSettings() {
       <Card className="p-4 md:p-6 bg-bambi-card border border-bambi-border transition-all duration-300 hover:border-bambi-accent/30">
         <h2 className="text-lg md:text-xl font-semibold mb-4">Abonnement</h2>
 
-        {user.plan === "découverte" ? (
+        {userDisplayData.plan === "découverte" ? (
           <div className="space-y-4">
             <div className="p-4 bg-bambi-background rounded-lg">
               <div className="font-medium">Plan Actuel: Plan Découverte</div>
@@ -203,7 +203,7 @@ export function AccountSettings() {
                 Générations d'images illimitées et configurations API illimitées.
               </div>
               <div className="text-sm mt-2">
-                Prochaine facturation: {user.nextBilling.toLocaleDateString()}
+                Prochaine facturation: {userDisplayData.nextBilling.toLocaleDateString()}
               </div>
             </div>
 

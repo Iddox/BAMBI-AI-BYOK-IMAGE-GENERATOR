@@ -8,29 +8,36 @@ import {
   UserIcon,
   HomeIcon,
   FolderIcon,
-  RocketIcon
+  RocketIcon,
+  BeakerIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Sidebar({
-  messagesCount = 25,
-  messagesLimit = 50
+  messagesCount = 0,
+  messagesLimit = 50,
+  createdImages = 0,
+  isPremium = false
 }: {
   messagesCount?: number;
   messagesLimit?: number;
+  createdImages?: number;
+  isPremium?: boolean;
 }) {
   const pathname = usePathname();
-
-  // Simuler un utilisateur premium (à remplacer par un hook useSubscription)
-  const [isPremiumUser, setIsPremiumUser] = useState(false);
 
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(path);
   };
 
   // Calculer le pourcentage d'utilisation pour la barre de progression
-  const usagePercentage = Math.min(100, (messagesCount / messagesLimit) * 100);
+  // Utiliser useState et useEffect pour éviter les erreurs d'hydratation
+  const [usagePercentage, setUsagePercentage] = useState(0);
+
+  useEffect(() => {
+    setUsagePercentage(Math.min(100, (messagesCount / messagesLimit) * 100));
+  }, [messagesCount, messagesLimit]);
 
   return (
     <div className="h-screen w-24 bg-[#111111] border-r border-bambi-accent/30 flex flex-col fixed left-0 top-0 z-30">
@@ -76,7 +83,11 @@ export function Sidebar({
             >
               <div className="relative">
                 <FolderIcon className="h-5 w-5 mx-auto" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-bambi-accent rounded-full flex items-center justify-center text-[10px] text-white">8</span>
+                {createdImages > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-bambi-accent rounded-full flex items-center justify-center text-[10px] text-white">
+                    {createdImages > 99 ? '99+' : createdImages}
+                  </span>
+                )}
               </div>
               <span className="text-xs mt-1 text-center">Créations</span>
             </Link>
@@ -92,6 +103,32 @@ export function Sidebar({
             >
               <KeyIcon className="h-5 w-5 mx-auto" />
               <span className="text-xs mt-1 text-center">Clés API</span>
+            </Link>
+          </li>
+          <li className="flex flex-col items-center">
+            <Link
+              href="/xai-test"
+              className={`flex flex-col items-center p-2 rounded-lg transition-colors w-full ${
+                isActive("/xai-test")
+                  ? "bg-bambi-accent/20 text-bambi-accent"
+                  : "text-bambi-subtext hover:bg-[#222222] hover:text-bambi-text"
+              }`}
+            >
+              <BeakerIcon className="h-5 w-5 mx-auto" />
+              <span className="text-xs mt-1 text-center">Test xAI</span>
+            </Link>
+          </li>
+          <li className="flex flex-col items-center">
+            <Link
+              href="/openai-test"
+              className={`flex flex-col items-center p-2 rounded-lg transition-colors w-full ${
+                isActive("/openai-test")
+                  ? "bg-bambi-accent/20 text-bambi-accent"
+                  : "text-bambi-subtext hover:bg-[#222222] hover:text-bambi-text"
+              }`}
+            >
+              <BeakerIcon className="h-5 w-5 mx-auto" />
+              <span className="text-xs mt-1 text-center">Test OpenAI</span>
             </Link>
           </li>
         </ul>
@@ -114,7 +151,7 @@ export function Sidebar({
         </div>
 
         {/* Bouton Premium - uniquement pour les utilisateurs non premium */}
-        {!isPremiumUser && (
+        {!isPremium && (
           <Link href="/plans" className="block mb-2">
             <Button
               variant="outline"
@@ -154,23 +191,29 @@ export function Sidebar({
 }
 
 export function MobileSidebar({
-  messagesCount = 25,
-  messagesLimit = 50
+  messagesCount = 0,
+  messagesLimit = 50,
+  createdImages = 0,
+  isPremium = false
 }: {
   messagesCount?: number;
   messagesLimit?: number;
+  createdImages?: number;
+  isPremium?: boolean;
 }) {
   const pathname = usePathname();
-
-  // Simuler un utilisateur premium (à remplacer par un hook useSubscription)
-  const [isPremiumUser, setIsPremiumUser] = useState(false);
 
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(path);
   };
 
   // Calculer le pourcentage d'utilisation pour la barre de progression
-  const usagePercentage = Math.min(100, (messagesCount / messagesLimit) * 100);
+  // Utiliser useState et useEffect pour éviter les erreurs d'hydratation
+  const [usagePercentage, setUsagePercentage] = useState(0);
+
+  useEffect(() => {
+    setUsagePercentage(Math.min(100, (messagesCount / messagesLimit) * 100));
+  }, [messagesCount, messagesLimit]);
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-bambi-accent/30 z-30">
@@ -194,7 +237,7 @@ export function MobileSidebar({
           </div>
         </div>
 
-        {!isPremiumUser && (
+        {!isPremium && (
           <Link href="/plans">
             <Button
               variant="outline"
@@ -220,13 +263,25 @@ export function MobileSidebar({
         <Link href="/gallery" className="p-2 flex flex-col items-center">
           <div className="relative">
             <FolderIcon className={`h-5 w-5 ${isActive("/gallery") ? "text-bambi-accent" : "text-bambi-subtext"}`} />
-            <span className="absolute -top-1 -right-1 h-4 w-4 bg-bambi-accent rounded-full flex items-center justify-center text-[10px] text-white">8</span>
+            {createdImages > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-bambi-accent rounded-full flex items-center justify-center text-[10px] text-white">
+                {createdImages > 99 ? '99+' : createdImages}
+              </span>
+            )}
           </div>
           <span className={`text-xs mt-1 ${isActive("/gallery") ? "text-bambi-accent" : "text-bambi-subtext"}`}>Créations</span>
         </Link>
         <Link href="/api-keys" className="p-2 flex flex-col items-center">
           <KeyIcon className={`h-5 w-5 ${isActive("/api-keys") ? "text-bambi-accent" : "text-bambi-subtext"}`} />
           <span className={`text-xs mt-1 ${isActive("/api-keys") ? "text-bambi-accent" : "text-bambi-subtext"}`}>Clés API</span>
+        </Link>
+        <Link href="/xai-test" className="p-2 flex flex-col items-center">
+          <BeakerIcon className={`h-5 w-5 ${isActive("/xai-test") ? "text-bambi-accent" : "text-bambi-subtext"}`} />
+          <span className={`text-xs mt-1 ${isActive("/xai-test") ? "text-bambi-accent" : "text-bambi-subtext"}`}>Test xAI</span>
+        </Link>
+        <Link href="/openai-test" className="p-2 flex flex-col items-center">
+          <BeakerIcon className={`h-5 w-5 ${isActive("/openai-test") ? "text-bambi-accent" : "text-bambi-subtext"}`} />
+          <span className={`text-xs mt-1 ${isActive("/openai-test") ? "text-bambi-accent" : "text-bambi-subtext"}`}>Test OpenAI</span>
         </Link>
         <Link href="/account" className="p-2 flex flex-col items-center">
           <div className="h-6 w-6 rounded-full bg-bambi-accent flex items-center justify-center text-white font-medium text-xs">

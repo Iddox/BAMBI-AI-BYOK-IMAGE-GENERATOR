@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import { Sparkles } from "@/components/ui/sparkles"
-import { SparklesText } from "@/components/ui/sparkles-text"
+// Temporairement commenté pour résoudre l'erreur
+// import { SparklesText } from "@/components/ui/sparkles-text"
 import NoTranslate from "@/components/client-wrappers/NoTranslate"
 import { OpenAIIcon, GoogleIcon, XAIIcon } from "@/components/icons/ai-providers"
 
@@ -40,18 +41,10 @@ const TrustedBy = () => {
 
       <div className="container-landing relative z-10">
         <div className="text-center mb-8">
-          {mounted ? (
-            <SparklesText
-              text="Compatible avec les leaders de l'IA"
-              className="text-3xl font-bold mb-2"
-              colors={{ first: "#7B5CFA", second: "#5E3DCE" }}
-              sparklesCount={6}
-            />
-          ) : (
-            <h3 className="text-3xl font-bold mb-2 bg-button-gradient bg-clip-text text-transparent">
-              Compatible avec les leaders de l'IA
-            </h3>
-          )}
+          {/* Temporairement désactivé pour résoudre l'erreur */}
+          <h3 className="text-3xl font-bold mb-2 bg-button-gradient bg-clip-text text-transparent">
+            Compatible avec les leaders de l'IA
+          </h3>
           <p className="text-xl text-bambi-subtext">
             Utilisez vos clés API existantes avec vos fournisseurs préférés
           </p>

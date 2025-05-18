@@ -6,9 +6,6 @@
     "/": {
       "files": [
         "server/edge-runtime-webpack.js",
-        "server/framework.js",
-        "server/npm.supabase-node_modules_supabase_a.js",
-        "server/npm.supabase-node_modules_supabase_n.js",
         "server/middleware.js"
       ],
       "name": "middleware",

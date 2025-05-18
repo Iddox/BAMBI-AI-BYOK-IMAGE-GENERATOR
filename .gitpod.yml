@@ -10,7 +10,8 @@ tasks:
       echo "Démarrage des serveurs MCP en arrière-plan..."
       npx -y @modelcontextprotocol/server-sequential-thinking &
       npx -y @upstash/context7-mcp@latest &
-      node /workspace/hiiiiiiiii/fetch-mcp-server/dist/index.js &
+      # Commented out due to missing module error. Need to configure fetch-mcp-server setup.
+      # node /workspace/hiiiiiiiii/fetch-mcp-server/dist/index.js &
       export BRAVE_API_KEY="BSAgZMgJcb58_xWbZGU_mtUfjyS5LAe" && npx -y @modelcontextprotocol/server-brave-search &
       echo "Serveurs MCP démarrés."
     command: npm run start

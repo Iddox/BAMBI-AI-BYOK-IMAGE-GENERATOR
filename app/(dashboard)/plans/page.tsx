@@ -3,7 +3,16 @@
 import { Suspense } from "react";
 import { Loader2Icon } from "lucide-react";
 import { ChunkErrorBoundary } from "@/components/ui/ChunkErrorBoundary";
-import { EnhancedPlanSelector } from "@/components/dashboard/EnhancedPlanSelector";
+import dynamic from 'next/dynamic';
+
+// Import dynamique du composant EnhancedPlanSelector
+const EnhancedPlanSelector = dynamic(
+  () => import('@/components/dashboard/EnhancedPlanSelector').then(mod => ({ default: mod.EnhancedPlanSelector })),
+  {
+    ssr: false,
+    loading: () => <LoadingComponent />
+  }
+);
 
 // Composant de chargement réutilisable
 const LoadingComponent = () => (
@@ -18,8 +27,11 @@ const LoadingComponent = () => (
 export default function PlansPage() {
   return (
     <ChunkErrorBoundary>
-      <Suspense fallback={<LoadingComponent />}>
-        <EnhancedPlanSelector />
+      {/* Utiliser key pour forcer un remontage complet et éviter les erreurs d'hydratation */}
+      <Suspense fallback={<LoadingComponent />} key="plan-selector-suspense">
+        <div suppressHydrationWarning>
+          <EnhancedPlanSelector />
+        </div>
       </Suspense>
     </ChunkErrorBoundary>
   );
